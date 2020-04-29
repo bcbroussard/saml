@@ -179,8 +179,11 @@ func (m *Middleware) RequireAccountHandler(w http.ResponseWriter, r *http.Reques
 		redirectURL := req.Redirect(relayState)
 		w.Header().Add("Location", redirectURL.String())
 		// Fix to prevent auto redirect with react native
-		// w.WriteHeader(http.StatusFound)
-		w.WriteHeader(http.StatusUnauthorized)
+		if r.Header.Get("X-NO-AUTH-REDIRECT") == "true" {
+			w.WriteHeader(http.StatusUnauthorized)
+		} else {
+			w.WriteHeader(http.StatusFound)
+		}
 		return
 	}
 	if binding == saml.HTTPPostBinding {
