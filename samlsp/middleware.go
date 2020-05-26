@@ -157,12 +157,7 @@ func (m *Middleware) HandleStartAuthFlow(w http.ResponseWriter, r *http.Request)
 	if binding == saml.HTTPRedirectBinding {
 		redirectURL := authReq.Redirect(relayState)
 		w.Header().Add("Location", redirectURL.String())
-		// Fix to prevent auto redirect with react native
-		if r.Header.Get("X-NO-AUTH-REDIRECT") == "true" {
-			w.WriteHeader(http.StatusUnauthorized)
-		} else {
-			w.WriteHeader(http.StatusFound)
-		}
+		w.WriteHeader(http.StatusFound)
 		return
 	}
 	if binding == saml.HTTPPostBinding {
